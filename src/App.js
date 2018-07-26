@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import './App.css';
 import Person from './person/person';
+import Radium from 'radium'
 
 class App extends Component {
-
   state = {
-    persons : [
-      {name: 'Max', age: 32},
-      {name: 'Mos', age: 32},
-      {name: 'Meh', age: 32},
+    persons: [
+      { id: 'asfa1', name: 'Max', age: 28 },
+      { id: 'vasdf1', name: 'Manu', age: 29 },
+      { id: 'asdf11', name: 'Stephanie', age: 26 }
     ],
-    showPersons: true,
+    showPersons: false,
 
   }
   switchNameHandler = (name) => {
@@ -29,13 +29,17 @@ class App extends Component {
     });
   }
 
-  nameChangeHandler = (e) => {
-    this.setState({
-      persons : [
-       {name: e.target.value, age: 32},
-       {name: 'Mosss', age: 32},
-       {name: 'ss', age: 32},
-   ]})
+  nameChangeHandler = (e, id) => {
+    const personIndex = this.state.persons.findIndex(p=>{
+      return p.id === id;
+    })
+    const  person= {
+      ...this.state.persons[personIndex]
+    };
+    person.name = e.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+    this.setState({persons: persons})
   }
 
   deleteNameHandler = (personIndex) => {
@@ -44,24 +48,41 @@ class App extends Component {
     this.setState({persons});
   }
   render() {
+    const style = {
+      backgroundColor: 'white',
+      font: 'inherit', 
+      border: '1px solid blue',
+      padding:'8px',
+      cursor: 'pointer',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      }
+    }
     let persons = null;
     if (this.state.showPersons){
       persons = ( <div>
         {this.state.persons.map((person, index) => {
           return <Person
+          key={person.id}
           click={this.deleteNameHandler.bind(this, index)}
           name={person.name}
           age={person.age}
-          changed={this.nameChangeHandler}
+          changed={(event) => this.nameChangeHandler(event, person.id)}
           />
         })}
       </div>);
+      style.backgroundColor = 'red'
     }
+    let classes = ['red', 'bold']
     return (
       <div className="App">
         <h1 className="App-title">
           Welcome to React
         </h1>
+        <p
+        className={classes.join(' ')}
+        > hey hey iam here</p>
         <button
           style={style}
           onClick={this.togglePersonHandler}
@@ -73,11 +94,5 @@ class App extends Component {
   }
 }
 
-const style = {
-  backgroundColor: 'white',
-  font: 'inherit', 
-  border: '1px solid blue',
-  padding:'8px',
-  cursor: 'pointer'
-}
-export default App;
+
+export default Radium(App);
